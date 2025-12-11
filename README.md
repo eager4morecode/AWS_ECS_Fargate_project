@@ -50,8 +50,8 @@ This project includes a basic DevSecOps pipeline and cloud security posture:
   - ECR image scanning on push
   - ECS tasks running in private subnets behind an ALB
   - IAM roles following least privilege
-  - (Optional) **AWS WAF** Web ACL in front of the ALB using AWS managed rules
-  - (Optional) **GuardDuty** and **Security Hub** enabled for account-level threat detection
+  - AWS WAF** Web ACL in front of the ALB using AWS managed rules
+  - GuardDuty** and **Security Hub** enabled for account-level threat detection
 
 These checks run automatically on every push and pull request. The deployment job only runs if all security checks pass.
 
