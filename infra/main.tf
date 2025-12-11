@@ -41,3 +41,8 @@ module "ecs" {
   service_security_group_id = aws_security_group.ecs_service.id
   log_group_name         = "/ecs/${var.project_name}"
 }
+module "waf" {
+  source       = "./modules/waf"
+  project_name = var.project_name
+  alb_arn      = module.alb.alb_arn
+}
