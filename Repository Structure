@@ -1,0 +1,47 @@
+cloud-microservice-ecs-fargate/
+├─ app/
+│  ├─ src/
+│  │  ├─ app.py
+│  │  ├─ requirements.txt
+│  ├─ Dockerfile
+│  ├─ README.md
+│
+├─ infra/
+│  ├─ main.tf
+│  ├─ providers.tf
+│  ├─ variables.tf
+│  ├─ outputs.tf
+│  ├─ terraform.tfvars.example
+│  ├─ modules/
+│  │  ├─ network/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│  │  ├─ ecs/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│  │  ├─ alb/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│  │  ├─ ecr/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│  │  ├─ iam/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│  │  ├─ monitoring/
+│  │  │  ├─ main.tf
+│  │  │  ├─ variables.tf
+│  │  │  ├─ outputs.tf
+│
+├─ .github/
+│  └─ workflows/
+│     ├─ ci-cd.yml
+│
+├─ architecture-diagram.png   # export from draw.io / Lucidchart
+├─ README.md                  # main project README
+└─ LICENSE (optional)
