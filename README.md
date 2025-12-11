@@ -34,3 +34,24 @@ cd app
 pip install -r src/requirements.txt
 python src/app.py
 # visit http://localhost:8080
+
+## DevSecOps & Security
+
+This project includes a basic DevSecOps pipeline and cloud security posture:
+
+- **CI/CD Security Gates**
+  - SAST with **Bandit** for Python code
+  - Python dependency scanning with **pip-audit**
+  - **Terraform** IaC security scanning with **Checkov**
+  - Container filesystem scanning with **Trivy**
+  - (Optional) Secret scanning with **Gitleaks**
+
+- **Cloud-Native Security**
+  - ECR image scanning on push
+  - ECS tasks running in private subnets behind an ALB
+  - IAM roles following least privilege
+  - (Optional) **AWS WAF** Web ACL in front of the ALB using AWS managed rules
+  - (Optional) **GuardDuty** and **Security Hub** enabled for account-level threat detection
+
+These checks run automatically on every push and pull request. The deployment job only runs if all security checks pass.
+
