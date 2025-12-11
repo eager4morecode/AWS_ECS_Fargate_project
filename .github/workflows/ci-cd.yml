@@ -3,14 +3,63 @@ name: CI-CD
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 env:
   AWS_REGION: us-east-1
   PROJECT_NAME: cloud-microservice-ecs-fargate
 
 jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ---- SAST + Dependency scan for Python ----
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python deps
+        working-directory: app
+        run: |
+          pip install -r src/requirements.txt
+          pip install bandit pip-audit
+
+      - name: Run Bandit (SAST)
+        working-directory: app
+        run: |
+          bandit -r src -lll
+
+      - name: Run pip-audit (dependency vulns)
+        working-directory: app
+        run: |
+          pip-audit
+
+      # ---- IaC scan with Checkov ----
+      - name: Checkov (Terraform security scan)
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra
+          framework: terraform
+
+      # ---- Container image scan with Trivy (using Dockerfile) ----
+      - name: Install Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './app'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+
   build-and-deploy:
     runs-on: ubuntu-latest
+    needs: security-checks    # <-- will only run if security job passes
 
     permissions:
       id-token: write
