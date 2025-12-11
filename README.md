@@ -13,11 +13,44 @@ This project deploys a containerized Python microservice to **AWS ECS Fargate** 
 - CloudWatch log groups and basic alarms
 - CI/CD using GitHub Actions (Docker build + Terraform deploy)
 
-## Security Architecture Diagram
+### Security Architecture Summary
 
-The diagram below illustrates the end-to-end DevSecOps and cloud-native security posture used in this project. It highlights the integration of secure networking, IAM least privilege, image scanning, IaC scanning, and CI/CD pipeline enforcement.
+This project follows a Defense-in-Depth strategy combining application, container, infrastructure, and pipeline security:
 
-![Security Architecture Diagram](architecture-diagram-security.png)
+**1. CI/CD DevSecOps Pipeline**
+- GitHub Actions performs SAST (Bandit), dependency scanning (pip-audit), IaC scanning (Checkov), container scanning (Trivy), and secret scanning (Gitleaks).
+- Only after all security checks pass, Terraform deploys infrastructure and updates ECS services.
+- AWS IAM OIDC role removes the need for long-lived credentials.
+
+**2. AWS WAF (Optional)**
+- Protects ALB from common vulnerabilities (OWASP Top 10, bot mitigation).
+- Blocks malicious requests before reaching the microservice.
+
+**3. ALB → ECS Fargate**
+- Application Load Balancer routes allowed traffic to ECS tasks.
+- ALB uses strict security groups and health checks.
+- ECS tasks run in isolated **private subnets** without public IPs.
+
+**4. VPC Security**
+- Public subnets: ALB only.
+- Private subnets: ECS tasks, NAT-only egress.
+- No direct inbound traffic to containers.
+
+**5. Container + Image Security**
+- ECR scan-on-push enabled.
+- Trivy scans Dockerfile and final image.
+- Immutable SHA tags used for deployment.
+
+**6. IAM Governance**
+- ECS Task Role follows least privilege.
+- ECS Execution Role limited to ECR pulls + logging.
+- CI/CD IAM permissions locked to Terraform state + ECS updates only.
+
+**7. Monitoring + Threat Detection**
+- CloudWatch logs/metrics for tasks and ALB.
+- Optional GuardDuty + Security Hub for workload and account-level threat detection.
+
+This layered approach creates a secure, automated, and compliant cloud microservice environment that aligns with modern DevSecOps practices.
 
 ## DevSecOps & Security
 
